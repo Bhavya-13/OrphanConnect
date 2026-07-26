@@ -1,8 +1,17 @@
 import { getAllVolunteerRequests, getOrphanageById } from "@/lib/data";
 import VolunteerRequestCard from "@/components/VolunteerRequestCard";
 
-export default function VolunteerPage() {
-  const requests = getAllVolunteerRequests();
+export const dynamic = "force-dynamic";
+
+export default async function VolunteerPage() {
+  const requests = await getAllVolunteerRequests();
+
+  const withNames = await Promise.all(
+    requests.map(async (r) => {
+      const orphanage = await getOrphanageById(r.orphanageId);
+      return { request: r, orphanageName: orphanage?.name };
+    })
+  );
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -12,15 +21,16 @@ export default function VolunteerPage() {
       </p>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {requests.map((r) => {
-          const orphanage = getOrphanageById(r.orphanageId);
-          return (
-            <VolunteerRequestCard key={r.id} request={r} orphanageName={orphanage?.name} />
-          );
-        })}
+        {withNames.map(({ request, orphanageName }) => (
+          <VolunteerRequestCard
+            key={request.id}
+            request={request}
+            orphanageName={orphanageName}
+          />
+        ))}
       </div>
 
-      {requests.length === 0 && (
+      {withNames.length === 0 && (
         <p className="text-gray-500">No volunteer requests at the moment.</p>
       )}
     </div>

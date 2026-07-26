@@ -168,6 +168,8 @@ export async function addContribution(contribution: Contribution) {
     id: contribution.id,
     need_id: contribution.needId,
     donor_name: contribution.donorName,
+    donor_email: contribution.donorEmail ?? null,
+    is_anonymous: contribution.isAnonymous,
     type: contribution.type,
     amount: contribution.amount ?? null,
     quantity: contribution.quantity ?? null,

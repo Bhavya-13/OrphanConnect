@@ -8,7 +8,9 @@ export async function POST(req: NextRequest) {
   const contribution: Contribution = {
     id: `contrib-${Date.now()}`,
     needId: body.needId,
-    donorName: body.donorName || "Anonymous",
+    donorName: body.isAnonymous || body.skip ? "Anonymous" : body.donorName || "Anonymous",
+    donorEmail: body.skip ? undefined : body.donorEmail || undefined,
+    isAnonymous: !!body.isAnonymous || !!body.skip,
     type: body.type,
     amount: body.amount,
     quantity: body.quantity,

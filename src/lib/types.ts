@@ -49,6 +49,8 @@ export interface Contribution {
   id: string;
   needId: string;
   donorName: string;
+  donorEmail?: string;
+  isAnonymous: boolean;
   type: "money" | "goods";
   amount?: number;
   quantity?: number;

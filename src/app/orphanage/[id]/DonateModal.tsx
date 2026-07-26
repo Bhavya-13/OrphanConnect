@@ -13,6 +13,9 @@ export default function DonateModal({
 }) {
   const [activeNeed, setActiveNeed] = useState<MoneyNeed | GoodsNeed | null>(null);
   const [donorName, setDonorName] = useState("");
+  const [donorEmail, setDonorEmail] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [skip, setSkip] = useState(false);
   const [amount, setAmount] = useState("");
   const [quantity, setQuantity] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -22,6 +25,9 @@ export default function DonateModal({
     setActiveNeed(need);
     setSubmitted(false);
     setDonorName("");
+    setDonorEmail("");
+    setIsAnonymous(false);
+    setSkip(false);
     setAmount("");
     setQuantity("");
   };
@@ -38,7 +44,10 @@ export default function DonateModal({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         needId: activeNeed.id,
-        donorName: donorName || "Anonymous",
+        donorName: donorName,
+        donorEmail: donorEmail,
+        isAnonymous: isAnonymous,
+        skip: skip,
         type: activeNeed.type,
         amount: activeNeed.type === "money" ? Number(amount) : undefined,
         quantity: activeNeed.type === "goods" ? Number(quantity) : undefined,
@@ -79,7 +88,7 @@ export default function DonateModal({
 
       {activeNeed && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 relative">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}
               className="absolute top-3 right-4 text-gray-400 hover:text-gray-700"
@@ -96,16 +105,43 @@ export default function DonateModal({
                     : "Pledge to fulfill part of this need"}
                 </p>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Your name</label>
-                    <input
-                      type="text"
-                      value={donorName}
-                      onChange={(e) => setDonorName(e.target.value)}
-                      placeholder="Optional - leave blank to stay anonymous"
-                      className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                    />
-                  </div>
+                  {!skip && (
+                    <>
+                      <div>
+                        <label className="text-sm font-medium text-gray-700">Your name</label>
+                        <input
+                          type="text"
+                          required={!skip}
+                          value={donorName}
+                          onChange={(e) => setDonorName(e.target.value)}
+                          placeholder="Your full name"
+                          className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-700">Email</label>
+                        <input
+                          type="email"
+                          required={!skip}
+                          value={donorEmail}
+                          onChange={(e) => setDonorEmail(e.target.value)}
+                          placeholder="you@example.com"
+                          className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                        />
+                        <p className="text-xs text-gray-400 mt-1">
+                          Used for your records and a future donation certificate.
+                        </p>
+                      </div>
+                      <label className="flex items-center gap-2 text-sm text-gray-700">
+                        <input
+                          type="checkbox"
+                          checked={isAnonymous}
+                          onChange={(e) => setIsAnonymous(e.target.checked)}
+                        />
+                        Donate anonymously (your name will be hidden publicly)
+                      </label>
+                    </>
+                  )}
 
                   {activeNeed.type === "money" ? (
                     <div>
@@ -145,6 +181,16 @@ export default function DonateModal({
                       : activeNeed.type === "money"
                       ? "Confirm Donation"
                       : "Confirm Pledge"}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSkip(!skip)}
+                    className="w-full text-xs text-gray-500 hover:text-gray-700 underline"
+                  >
+                    {skip
+                      ? "Actually, I want to share my details"
+                      : "Skip and donate without sharing details"}
                   </button>
                 </form>
               </>
