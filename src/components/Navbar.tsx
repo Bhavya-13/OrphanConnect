@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/useAuth";
 
 export default function Navbar() {
-  const { user, signOut } = useAuth();
+  const { user, role, signOut } = useAuth();
 
   return (
     <header className="bg-white border-b border-orange-100 sticky top-0 z-10">
@@ -22,11 +22,13 @@ export default function Navbar() {
           <Link href="/register" className="hover:text-brand-600">
             Register Orphanage
           </Link>
+          {role === "admin" && (
+            <Link href="/admin" className="text-brand-600 hover:text-brand-700 font-semibold">
+              Admin
+            </Link>
+          )}
           {user ? (
-            <button
-              onClick={signOut}
-              className="text-gray-600 hover:text-brand-600"
-            >
+            <button onClick={signOut} className="text-gray-600 hover:text-brand-600">
               Sign out
             </button>
           ) : (
