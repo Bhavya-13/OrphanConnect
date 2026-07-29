@@ -235,3 +235,36 @@ export async function addVolunteerSignup(signup: VolunteerSignup) {
 
   return signup;
 }
+
+export async function getSignupsByRequestIds(
+  requestIds: string[]
+): Promise<any[]> {
+  if (requestIds.length === 0) return [];
+  const { data, error } = await supabase
+    .from("volunteer_signups")
+    .select("*")
+    .in("volunteer_request_id", requestIds);
+  if (error || !data) return [];
+  return data;
+}
+
+export async function addVolunteerRequest(req: {
+  id: string;
+  orphanageId: string;
+  task: string;
+  description: string;
+  date: string;
+  slotsAvailable: number;
+}) {
+  const { error } = await supabase.from("volunteer_requests").insert({
+    id: req.id,
+    orphanage_id: req.orphanageId,
+    task: req.task,
+    description: req.description,
+    date: req.date,
+    slots_available: req.slotsAvailable,
+    slots_filled: 0,
+  });
+  if (error) throw error;
+  return req;
+}

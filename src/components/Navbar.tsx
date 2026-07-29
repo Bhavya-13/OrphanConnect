@@ -13,28 +13,21 @@ export default function Navbar() {
           Orphan<span className="text-gray-800">Connect</span>
         </Link>
         <nav className="flex gap-6 text-sm font-medium text-gray-600 items-center">
-          <Link href="/browse" className="hover:text-brand-600">
-            Browse Orphanages
-          </Link>
-          <Link href="/volunteer" className="hover:text-brand-600">
-            Volunteer
-          </Link>
-          <Link href="/register" className="hover:text-brand-600">
-            Register Orphanage
-          </Link>
+          <Link href="/browse" className="hover:text-brand-600">Browse Orphanages</Link>
+          <Link href="/volunteer" className="hover:text-brand-600">Volunteer</Link>
+          {role === "orphanage" && (
+            <Link href="/dashboard" className="text-brand-600 hover:text-brand-700 font-semibold">Dashboard</Link>
+          )}
+          {role !== "orphanage" && role !== "admin" && (
+            <Link href="/register" className="hover:text-brand-600">Register Orphanage</Link>
+          )}
           {role === "admin" && (
-            <Link href="/admin" className="text-brand-600 hover:text-brand-700 font-semibold">
-              Admin
-            </Link>
+            <Link href="/admin" className="text-brand-600 hover:text-brand-700 font-semibold">Admin</Link>
           )}
           {user ? (
-            <button onClick={signOut} className="text-gray-600 hover:text-brand-600">
-              Sign out
-            </button>
+            <button onClick={signOut} className="text-gray-600 hover:text-brand-600">Sign out</button>
           ) : (
-            <Link href="/login" className="hover:text-brand-600">
-              Sign in
-            </Link>
+            <Link href="/login" className="hover:text-brand-600">Sign in</Link>
           )}
         </nav>
       </div>
