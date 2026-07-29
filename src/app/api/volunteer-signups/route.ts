@@ -9,7 +9,9 @@ export async function POST(req: NextRequest) {
     id: `signup-${Date.now()}`,
     volunteerRequestId: body.volunteerRequestId,
     volunteerName: body.volunteerName,
-    contact: body.contact,
+    volunteerEmail: body.volunteerEmail,
+    volunteerPhone: body.volunteerPhone,
+    contact: body.volunteerPhone || body.volunteerEmail || "",
     createdAt: new Date().toISOString(),
   };
 

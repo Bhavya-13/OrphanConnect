@@ -214,6 +214,8 @@ export async function addVolunteerSignup(signup: VolunteerSignup) {
     id: signup.id,
     volunteer_request_id: signup.volunteerRequestId,
     volunteer_name: signup.volunteerName,
+    volunteer_email: signup.volunteerEmail,
+    volunteer_phone: signup.volunteerPhone,
     contact: signup.contact,
   });
   if (error) throw error;

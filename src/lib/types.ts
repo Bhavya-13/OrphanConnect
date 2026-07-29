@@ -66,6 +66,8 @@ export interface VolunteerSignup {
   id: string;
   volunteerRequestId: string;
   volunteerName: string;
+  volunteerEmail: string;
+  volunteerPhone: string;
   contact: string;
   createdAt: string;
 }

@@ -7,7 +7,7 @@ import {
 } from "@/lib/data";
 import Badge from "@/components/Badge";
 import DonateModal from "./DonateModal";
-import VolunteerSignupForm from "@/components/VolunteerSignupForm";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -61,7 +61,12 @@ export default async function OrphanageDetailPage({
                 <p className="text-sm text-gray-700 mb-3">
                   Date: {v.date} &middot; Slots left: {v.slotsAvailable - v.slotsFilled}/{v.slotsAvailable}
                 </p>
-                <VolunteerSignupForm requestId={v.id} />
+                <Link
+                  href="/volunteer"
+                  className="text-sm font-medium text-brand-600 hover:underline"
+                >
+                  Apply on the Volunteer page &rarr;
+                </Link>
               </div>
             ))}
           </div>
