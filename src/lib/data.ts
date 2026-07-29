@@ -20,6 +20,11 @@ function mapOrphanage(row: any): Orphanage {
     verified: row.verified,
     imageUrl: row.image_url,
     views: row.views,
+    ownerId: row.owner_id ?? undefined,
+    contactName: row.contact_name ?? undefined,
+    contactPhone: row.contact_phone ?? undefined,
+    contactEmail: row.contact_email ?? undefined,
+    status: row.status ?? "pending",
   };
 }
 
@@ -61,10 +66,13 @@ function mapVolunteerRequest(row: any): VolunteerRequest {
   };
 }
 
-// ---------- Reads ----------
+// ---------- Reads (public site shows only APPROVED orphanages) ----------
 
 export async function getAllOrphanages(): Promise<Orphanage[]> {
-  const { data, error } = await supabase.from("orphanages").select("*");
+  const { data, error } = await supabase
+    .from("orphanages")
+    .select("*")
+    .eq("status", "approved");
   if (error || !data) return [];
   return data.map(mapOrphanage);
 }
@@ -87,6 +95,7 @@ export async function getLeastVisibleOrphanages(
   const { data, error } = await supabase
     .from("orphanages")
     .select("*")
+    .eq("status", "approved")
     .order("views", { ascending: true })
     .limit(limit);
   if (error || !data) return [];
@@ -125,22 +134,6 @@ export async function getAllVolunteerRequests(): Promise<VolunteerRequest[]> {
 
 // ---------- Writes ----------
 
-export async function addOrphanage(orphanage: Orphanage) {
-  const { error } = await supabase.from("orphanages").insert({
-    id: orphanage.id,
-    name: orphanage.name,
-    location: orphanage.location,
-    state: orphanage.state,
-    story: orphanage.story,
-    children_count: orphanage.childrenCount,
-    verified: orphanage.verified,
-    image_url: orphanage.imageUrl,
-    views: orphanage.views,
-  });
-  if (error) throw error;
-  return orphanage;
-}
-
 export async function addNeed(need: Need) {
   const row: any = {
     id: need.id,
@@ -176,7 +169,6 @@ export async function addContribution(contribution: Contribution) {
   });
   if (error) throw error;
 
-  // Update the need's progress
   const { data: needRow } = await supabase
     .from("needs")
     .select("*")
@@ -226,7 +218,6 @@ export async function addVolunteerSignup(signup: VolunteerSignup) {
   });
   if (error) throw error;
 
-  // Increment slots_filled
   const { data: reqRow } = await supabase
     .from("volunteer_requests")
     .select("*")

@@ -43,6 +43,11 @@ export interface Orphanage {
   verified: boolean;
   imageUrl: string;
   views: number;
+  ownerId?: string;
+  contactName?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  status?: string;
 }
 
 export interface Contribution {
