@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import AdminGuard from "@/components/AdminGuard";
 import { supabase } from "@/lib/supabase";
+import { formatDate } from "@/lib/formatDate";
 
 interface LedgerRow {
   id: string;
@@ -73,7 +74,7 @@ function Ledger() {
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id} className="border-t border-orange-50">
-                  <td className="px-3 py-2">{new Date(r.created_at).toLocaleDateString()}</td>
+                                    <td className="px-3 py-2">{formatDate(r.created_at)}</td>
                   <td className="px-3 py-2">{r.donor_name}</td>
                   <td className="px-3 py-2">{r.donor_email ?? "-"}</td>
                   <td className="px-3 py-2 capitalize">{r.type}</td>

@@ -8,6 +8,7 @@ import {
 import Badge from "@/components/Badge";
 import DonateModal from "./DonateModal";
 import Link from "next/link";
+import { formatDate } from "@/lib/formatDate";
 
 export const dynamic = "force-dynamic";
 
@@ -59,7 +60,7 @@ export default async function OrphanageDetailPage({
                 <h4 className="font-semibold text-gray-800">{v.task}</h4>
                 <p className="text-sm text-gray-600 mb-2">{v.description}</p>
                 <p className="text-sm text-gray-700 mb-3">
-                  Date: {v.date} &middot; Slots left: {v.slotsAvailable - v.slotsFilled}/{v.slotsAvailable}
+                  Date: {formatDate(v.date)} &middot; Slots left: {v.slotsAvailable - v.slotsFilled}/{v.slotsAvailable}
                 </p>
                 <Link
                   href="/volunteer"

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import OrphanageGuard from "@/components/OrphanageGuard";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/useAuth";
+import { formatDate } from "@/lib/formatDate";
 
 export default function DashboardPage() {
   return (
@@ -302,7 +303,7 @@ function Dashboard() {
                     <p className="font-medium text-gray-800">{r.task}</p>
                     <span className="text-xs text-gray-500">{r.slots_filled}/{r.slots_available} slots</span>
                   </div>
-                  <p className="text-xs text-gray-500 mb-3">{r.date} · {applicants.length} applicant(s)</p>
+                  <p className="text-xs text-gray-500 mb-3">{formatDate(r.date)} · {applicants.length} applicant(s)</p>
                   {applicants.length === 0 ? (
                     <p className="text-sm text-gray-400">No applicants yet.</p>
                   ) : (
