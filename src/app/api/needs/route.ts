@@ -1,44 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
-import { addNeed } from "@/lib/data";
-import { Need } from "@/lib/types";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
-  let need: Need;
+  const row: any = {
+    id: `need-${Date.now()}`,
+    orphanage_id: body.orphanageId,
+    type: body.type,
+    title: body.title,
+    description: body.description,
+    urgent: !!body.urgent,
+  };
 
   if (body.type === "money") {
-    need = {
-      id: `need-${Date.now()}`,
-      orphanageId: body.orphanageId,
-      type: "money",
-      title: body.title,
-      description: body.description,
-      amountNeeded: Number(body.amountNeeded),
-      amountRaised: 0,
-      urgent: !!body.urgent,
-    };
+    row.amount_needed = Number(body.amountNeeded);
+    row.amount_raised = 0;
   } else {
-    need = {
-      id: `need-${Date.now()}`,
-      orphanageId: body.orphanageId,
-      type: "goods",
-      title: body.title,
-      description: body.description,
-      quantityNeeded: Number(body.quantityNeeded),
-      quantityFulfilled: 0,
-      unit: body.unit,
-      urgent: !!body.urgent,
-    };
+    row.quantity_needed = Number(body.quantityNeeded);
+    row.quantity_fulfilled = 0;
+    row.unit = body.unit;
   }
 
-  try {
-    await addNeed(need);
-    return NextResponse.json({ success: true, need });
-  } catch (error) {
-    return NextResponse.json(
-      { success: false, error: String(error) },
-      { status: 500 }
-    );
+  const { error } = await supabaseAdmin.from("needs").insert(row);
+
+  if (error) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
+  return NextResponse.json({ success: true });
 }

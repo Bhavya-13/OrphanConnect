@@ -1,20 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { addVolunteerRequest } from "@/lib/data";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
-  try {
-    await addVolunteerRequest({
-      id: `vol-${Date.now()}`,
-      orphanageId: body.orphanageId,
-      task: body.task,
-      description: body.description,
-      date: body.date,
-      slotsAvailable: Number(body.slotsAvailable) || 0,
-    });
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
+  const { error } = await supabaseAdmin.from("volunteer_requests").insert({
+    id: `vol-${Date.now()}`,
+    orphanage_id: body.orphanageId,
+    task: body.task,
+    description: body.description,
+    date: body.date,
+    slots_available: Number(body.slotsAvailable) || 0,
+    slots_filled: 0,
+  });
+
+  if (error) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
+  return NextResponse.json({ success: true });
 }

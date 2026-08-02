@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
   const id = `orph-${Date.now()}`;
 
-  const { error } = await supabase.from("orphanages").insert({
+  const { error } = await supabaseAdmin.from("orphanages").insert({
     id,
     name: body.name,
     location: body.location,
@@ -15,8 +15,7 @@ export async function POST(req: NextRequest) {
     children_count: Number(body.childrenCount) || 0,
     verified: false,
     status: "pending",
-    image_url:
-      "https://images.unsplash.com/photo-1519222970733-f546218fa6d7?q=80&w=1200",
+    image_url: "https://images.unsplash.com/photo-1519222970733-f546218fa6d7?q=80&w=1200",
     views: 0,
     owner_id: body.ownerId,
     contact_name: body.contactName,
@@ -30,11 +29,7 @@ export async function POST(req: NextRequest) {
   });
 
   if (error) {
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-
   return NextResponse.json({ success: true, orphanage: { id } });
 }

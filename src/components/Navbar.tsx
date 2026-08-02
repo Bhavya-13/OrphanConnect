@@ -2,9 +2,16 @@
 
 import Link from "next/link";
 import { useAuth } from "@/lib/useAuth";
+import { useToast } from "@/lib/useToast";
 
 export default function Navbar() {
   const { user, role, signOut } = useAuth();
+  const { showToast } = useToast();
+
+  const handleSignOut = async () => {
+    await signOut();
+    showToast("You have been signed out.", "info");
+  };
 
   return (
     <header className="bg-white border-b border-orange-100 sticky top-0 z-10">
@@ -15,6 +22,15 @@ export default function Navbar() {
         <nav className="flex gap-6 text-sm font-medium text-gray-600 items-center">
           <Link href="/browse" className="hover:text-brand-600">Browse Orphanages</Link>
           <Link href="/volunteer" className="hover:text-brand-600">Volunteer</Link>
+          
+          {/* test for popup */}
+          <button
+            onClick={() => showToast("TEST TOAST WORKS", "success")}
+            className="text-red-600 font-bold"
+          >
+            TEST
+          </button>
+
           {role === "orphanage" && (
             <Link href="/dashboard" className="text-brand-600 hover:text-brand-700 font-semibold">Dashboard</Link>
           )}
@@ -25,7 +41,7 @@ export default function Navbar() {
             <Link href="/admin" className="text-brand-600 hover:text-brand-700 font-semibold">Admin</Link>
           )}
           {user ? (
-            <button onClick={signOut} className="text-gray-600 hover:text-brand-600">Sign out</button>
+            <button onClick={handleSignOut} className="text-gray-600 hover:text-brand-600">Sign out</button>
           ) : (
             <Link href="/login" className="hover:text-brand-600">Sign in</Link>
           )}

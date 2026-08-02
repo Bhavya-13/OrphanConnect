@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useToast } from "@/lib/useToast";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [step, setStep] = useState<"email" | "otp">("email");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -25,7 +27,10 @@ export default function LoginPage() {
 
     setLoading(false);
     if (error) {
-      setError(error.message);
+      setError(
+        error.message ||
+          "Couldn't send the code. During testing, codes can only be sent to the email registered with our email provider."
+      );
     } else {
       setStep("otp");
     }
@@ -59,7 +64,8 @@ export default function LoginPage() {
     }
 
     setLoading(false);
-    router.push("/");
+    showToast("Signed in successfully!", "success");
+    setTimeout(() => router.push("/"), 800);
   };
 
   return (

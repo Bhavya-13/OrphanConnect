@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/lib/useAuth";
+import { ToastProvider } from "@/lib/useToast";
 import DevRoleSwitcher from "@/components/DevRoleSwitcher";
 
 export const metadata: Metadata = {
@@ -18,12 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col text-gray-800">
-        <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <DevRoleSwitcher />
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <DevRoleSwitcher />
+          </AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );
