@@ -268,3 +268,48 @@ export async function addVolunteerRequest(req: {
   if (error) throw error;
   return req;
 }
+
+export async function getAllOpenNeeds(): Promise<any[]> {
+  // Get approved orphanages
+  const { data: orphs } = await supabase
+    .from("orphanages")
+    .select("id, name, location, state")
+    .eq("status", "approved");
+
+  if (!orphs || orphs.length === 0) return [];
+
+  const orphMap = new Map(orphs.map((o: any) => [o.id, o]));
+  const approvedIds = orphs.map((o: any) => o.id);
+
+  // Get needs belonging to approved orphanages
+  const { data: needs } = await supabase
+    .from("needs")
+    .select("*")
+    .in("orphanage_id", approvedIds);
+
+  if (!needs) return [];
+
+  // Attach orphanage info + filter out fully-completed needs
+  return needs
+    .map((n: any) => {
+      const current = n.type === "money" ? n.amount_raised ?? 0 : n.quantity_fulfilled ?? 0;
+      const total = n.type === "money" ? n.amount_needed ?? 0 : n.quantity_needed ?? 0;
+      const orph = orphMap.get(n.orphanage_id);
+      return {
+        id: n.id,
+        orphanageId: n.orphanage_id,
+        orphanageName: (orph as any)?.name ?? "",
+        orphanageLocation: orph ? `${(orph as any).location}, ${(orph as any).state}` : "",
+        state: (orph as any)?.state ?? "",
+        type: n.type,
+        title: n.title,
+        description: n.description,
+        urgent: n.urgent,
+        unit: n.unit,
+        current,
+        total,
+        percent: total > 0 ? Math.min(100, Math.round((current / total) * 100)) : 0,
+      };
+    })
+    .filter((n: any) => n.percent < 100); // hide fully completed needs
+}

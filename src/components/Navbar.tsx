@@ -21,8 +21,8 @@ export default function Navbar() {
         </Link>
         <nav className="flex gap-6 text-sm font-medium text-gray-600 items-center">
           <Link href="/browse" className="hover:text-brand-600">Browse Orphanages</Link>
+          <Link href="/give" className="hover:text-brand-600">Give</Link>
           <Link href="/volunteer" className="hover:text-brand-600">Volunteer</Link>
-
           {role === "orphanage" && (
             <Link href="/dashboard" className="text-brand-600 hover:text-brand-700 font-semibold">Dashboard</Link>
           )}
