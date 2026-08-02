@@ -244,7 +244,10 @@ function Dashboard() {
                 <div key={n.id} className="bg-white border border-orange-100 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-1">
                     <p className="font-medium text-gray-800 text-sm">{n.title}</p>
-                    {n.urgent && <span className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">Urgent</span>}
+                    <div className="flex gap-1">
+                      {pct >= 100 && <span className="text-xs font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">Fulfilled</span>}
+                      {n.urgent && pct < 100 && <span className="text-xs font-semibold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">Urgent</span>}
+                    </div>
                   </div>
                   <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-1">
                     <div className="h-full bg-brand-500 rounded-full" style={{ width: `${pct}%` }} />

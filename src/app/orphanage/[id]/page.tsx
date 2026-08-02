@@ -26,9 +26,17 @@ export default async function OrphanageDetailPage({
 
   const needs = await getNeedsByOrphanage(id);
   const volunteerRequests = await getVolunteerRequestsByOrphanage(id);
-  const moneyNeeds = needs.filter((n) => n.type === "money");
-  const goodsNeeds = needs.filter((n) => n.type === "goods");
+  const isOpen = (n: any) => {
+    if (n.type === "money") {
+      return (n.amountRaised ?? 0) < (n.amountNeeded ?? 0);
+    }
+    return (n.quantityFulfilled ?? 0) < (n.quantityNeeded ?? 0);
+  };
 
+  const openNeeds = needs.filter(isOpen);
+  const moneyNeeds = openNeeds.filter((n) => n.type === "money");
+  const goodsNeeds = openNeeds.filter((n) => n.type === "goods");
+  
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
       <div className="relative w-full h-64 rounded-xl overflow-hidden mb-6">
