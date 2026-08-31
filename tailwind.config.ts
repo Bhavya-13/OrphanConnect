@@ -7,19 +7,37 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        serif: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],
+      },
       colors: {
         brand: {
-          50: "#fff7ed",
-          100: "#ffedd5",
-          200: "#fed7aa",
-          300: "#fdba74",
-          400: "#fb923c",
-          500: "#f97316",
-          600: "#ea580c",
-          700: "#c2410c",
-          800: "#9a3412",
-          900: "#7c2d12",
+          50: "#fff8ed",
+          100: "#ffedd0",
+          200: "#fed7a1",
+          300: "#fdb962",
+          400: "#fb9433",
+          500: "#f3760f",
+          600: "#d95c0a",
+          700: "#b3450b",
+          800: "#8f3710",
+          900: "#752f11",
         },
+        teal: {
+          50: "#f0fbfa",
+          300: "#7bd4c9",
+          400: "#4fbcb0",
+          500: "#2fa39a",
+        },
+      },
+      keyframes: {
+        "fade-up": {
+          from: { opacity: "0", transform: "translateY(16px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+      animation: {
+        "fade-up": "fade-up 0.6s ease-out forwards",
       },
     },
   },
