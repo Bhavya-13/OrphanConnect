@@ -103,11 +103,11 @@ export default async function HomePage() {
                   priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 text-white">
+                <div className="absolute bottom-4 right-4 max-w-[65%] text-white text-right">
                   <p className="text-xs uppercase tracking-wide text-white/70 mb-1">
                     Least seen this month
                   </p>
-                  <p className="font-serif text-lg font-semibold">{spotlight.name}</p>
+                  <p className="font-serif text-lg font-semibold leading-tight">{spotlight.name}</p>
                   <p className="text-sm text-white/80">
                     {spotlight.location}, {spotlight.state}
                   </p>
