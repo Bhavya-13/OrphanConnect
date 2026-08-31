@@ -1,27 +1,39 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getLeastVisibleOrphanages, getAllOrphanages } from "@/lib/data";
+import {
+  getLeastVisibleOrphanages,
+  getAllOrphanages,
+  getAllOpenNeeds,
+} from "@/lib/data";
 import OrphanageCard from "@/components/OrphanageCard";
+import ProgressBar from "@/components/ProgressBar";
+import Badge from "@/components/Badge";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const featured = await getLeastVisibleOrphanages(3);
   const all = await getAllOrphanages();
+  const openNeeds = await getAllOpenNeeds();
 
   const totalOrphanages = all.length;
   const totalChildren = all.reduce((sum, o) => sum + o.childrenCount, 0);
   const totalStates = new Set(all.map((o) => o.state)).size;
 
-  // Pull one real story forward for the pull-quote section
   const spotlight = featured[0] ?? all[0];
+  const urgentNeeds = openNeeds.filter((n) => n.urgent).slice(0, 4);
+  const marqueeNames = all.length > 0 ? [...all, ...all] : []; // duplicate for seamless loop
 
   return (
     <div className="overflow-x-hidden">
       {/* HERO */}
       <section className="relative">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-50 via-white to-teal-50/40" />
-        <div className="relative max-w-6xl mx-auto px-4 pt-14 sm:pt-20 pb-20 sm:pb-28 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        {/* soft blob shapes */}
+        <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-200/30 blur-3xl" />
+        <div className="absolute top-40 -left-24 w-72 h-72 rounded-full bg-teal-300/20 blur-3xl" />
+
+        <div className="relative max-w-6xl mx-auto px-4 pt-14 sm:pt-20 pb-16 sm:pb-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left: copy */}
           <div className="relative z-10 text-center lg:text-left">
             <span className="inline-flex items-center gap-2 bg-white shadow-sm ring-1 ring-brand-100 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
@@ -42,7 +54,7 @@ export default async function HomePage() {
               ones furthest from the spotlight &mdash; and puts them right in
               front of you.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 sm:gap-4 mb-8">
               <Link
                 href="/browse"
                 className="bg-brand-600 text-white px-7 py-3.5 rounded-full font-medium hover:bg-brand-700 hover:-translate-y-0.5 transition-all shadow-md shadow-brand-600/20"
@@ -56,6 +68,26 @@ export default async function HomePage() {
                 Register an Orphanage
               </Link>
             </div>
+
+            {/* Social proof: photo stack */}
+            {all.length > 0 && (
+              <div className="flex items-center justify-center lg:justify-start gap-3">
+                <div className="flex -space-x-3">
+                  {all.slice(0, 4).map((o) => (
+                    <div
+                      key={o.id}
+                      className="relative w-9 h-9 rounded-full ring-2 ring-white overflow-hidden shrink-0"
+                    >
+                      <Image src={o.imageUrl} alt={o.name} fill className="object-cover" />
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 text-left">
+                  Backed by families across{" "}
+                  <span className="font-semibold text-gray-700">{totalStates} states</span>
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Right: photo collage with overlapping stat card */}
@@ -88,39 +120,87 @@ export default async function HomePage() {
               <p className="text-2xl font-bold text-brand-600 leading-none">{totalChildren}</p>
               <p className="text-xs text-gray-500 mt-1">children supported</p>
             </div>
+
+            {/* Floating urgent-need chip */}
+            {urgentNeeds[0] && (
+              <div className="absolute -top-5 -right-3 sm:-right-6 bg-white rounded-2xl shadow-xl px-4 py-3 rotate-3 border border-orange-50 max-w-[11rem]">
+                <Badge variant="urgent">Urgent</Badge>
+                <p className="text-xs text-gray-700 mt-1.5 leading-snug line-clamp-2">
+                  {urgentNeeds[0].title}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Diagonal divider into next section */}
-        <svg
-          className="block w-full text-white"
-          viewBox="0 0 1440 60"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <path d="M0,60 L1440,0 L1440,60 Z" fill="currentColor" />
-        </svg>
+        {/* Marquee ticker of orphanage names */}
+        {marqueeNames.length > 0 && (
+          <div className="relative border-y border-orange-100 bg-white/80 backdrop-blur-sm py-3 overflow-hidden">
+            <div className="flex animate-marquee whitespace-nowrap">
+              {marqueeNames.map((o, i) => (
+                <span
+                  key={`${o.id}-${i}`}
+                  className="mx-6 text-sm font-medium text-gray-400 flex items-center gap-2"
+                >
+                  <span className="w-1 h-1 rounded-full bg-brand-400" />
+                  {o.name}
+                  <span className="text-gray-300">&middot;</span>
+                  <span className="text-gray-400">{o.location}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
-      {/* STATS */}
-      <section className="bg-white pb-4">
-        <div className="max-w-5xl mx-auto px-4 grid grid-cols-3 gap-4 sm:gap-8 text-center">
-          {[
-            { value: totalOrphanages, label: "Orphanages" },
-            { value: totalChildren, label: "Children supported" },
-            { value: totalStates, label: "States reached" },
-          ].map((stat, i) => (
-            <div
-              key={stat.label}
-              className="opacity-0 animate-fade-up"
-              style={{ animationDelay: `${i * 120}ms`, animationFillMode: "forwards" }}
-            >
-              <p className="text-3xl sm:text-4xl font-serif font-bold text-brand-600">{stat.value}</p>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">{stat.label}</p>
-            </div>
-          ))}
+      {/* STATS — ticket-stub style */}
+      <section className="bg-white py-10 sm:py-14">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="grid grid-cols-3 divide-x divide-dashed divide-orange-200 border-2 border-dashed border-orange-200 rounded-2xl">
+            {[
+              { value: totalOrphanages, label: "Orphanages" },
+              { value: totalChildren, label: "Children supported" },
+              { value: totalStates, label: "States reached" },
+            ].map((stat, i) => (
+              <div
+                key={stat.label}
+                className="text-center py-6 sm:py-8 opacity-0 animate-fade-up"
+                style={{ animationDelay: `${i * 120}ms`, animationFillMode: "forwards" }}
+              >
+                <p className="text-3xl sm:text-4xl font-serif font-bold text-brand-600">{stat.value}</p>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">{stat.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
+
+      {/* LIVE NEEDS STRIP */}
+      {urgentNeeds.length > 0 && (
+        <section className="max-w-6xl mx-auto px-4 pb-4">
+          <div className="flex items-center gap-2 mb-5">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
+            </span>
+            <p className="text-sm font-semibold text-gray-700">Urgent needs right now</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {urgentNeeds.map((n) => (
+              <Link
+                key={n.id}
+                href={`/orphanage/${n.orphanageId}`}
+                className="block bg-white border border-orange-100 rounded-xl p-4 hover:border-brand-300 hover:shadow-md transition-all"
+              >
+                <Badge variant="urgent">Urgent</Badge>
+                <p className="font-medium text-sm text-gray-800 mt-2 line-clamp-1">{n.title}</p>
+                <p className="text-xs text-gray-500 mb-3 line-clamp-1">{n.orphanageName}</p>
+                <ProgressBar current={n.current} total={n.total} />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* HOW IT WORKS — staggered, alternating layout */}
       <section className="max-w-5xl mx-auto px-4 py-20 sm:py-28">
