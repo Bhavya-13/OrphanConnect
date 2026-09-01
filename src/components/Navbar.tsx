@@ -20,11 +20,17 @@ export default function Navbar() {
 
   const closeMenu = () => setOpen(false);
 
-  const navItems = [
+  const allNavItems = [
     { href: "/browse", label: "Browse" },
     { href: "/give", label: "Give" },
     { href: "/volunteer", label: "Volunteer" },
   ];
+
+  // Orphanage owners can browse, but shouldn't see donor/volunteer actions
+  const navItems =
+    role === "orphanage"
+      ? allNavItems.filter((item) => item.href === "/browse")
+      : allNavItems;
 
   const isActive = (href: string) => pathname === href;
 

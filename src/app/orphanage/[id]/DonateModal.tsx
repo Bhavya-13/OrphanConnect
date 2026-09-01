@@ -61,8 +61,11 @@ export default function DonateModal({
   return (
     <div>
       {moneyNeeds.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Money Needed</h2>
+        <div className="mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-gray-900">Money Needed</h2>
+          </div>
           <div className="grid md:grid-cols-2 gap-4">
             {moneyNeeds.map((n) => (
               <button key={n.id} onClick={() => openNeed(n)} className="text-left">
@@ -74,8 +77,11 @@ export default function DonateModal({
       )}
 
       {goodsNeeds.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Goods Needed</h2>
+        <div className="mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-gray-900">Goods Needed</h2>
+          </div>
           <div className="grid md:grid-cols-2 gap-4">
             {goodsNeeds.map((n) => (
               <button key={n.id} onClick={() => openNeed(n)} className="text-left">
@@ -87,19 +93,22 @@ export default function DonateModal({
       )}
 
       {activeNeed && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-7 relative max-h-[90vh] overflow-y-auto shadow-2xl">
             <button
               onClick={closeModal}
-              className="absolute top-3 right-4 text-gray-400 hover:text-gray-700"
+              aria-label="Close"
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
             >
-              X
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
             </button>
 
             {!submitted ? (
               <>
-                <h3 className="text-lg font-bold text-gray-800 mb-1">{activeNeed.title}</h3>
-                <p className="text-sm text-gray-500 mb-4">
+                <h3 className="font-serif text-lg font-bold text-gray-900 mb-1 pr-8">{activeNeed.title}</h3>
+                <p className="text-sm text-gray-500 mb-5">
                   {activeNeed.type === "money"
                     ? "Donate money towards this need"
                     : "Pledge to fulfill part of this need"}
@@ -115,7 +124,7 @@ export default function DonateModal({
                           value={donorName}
                           onChange={(e) => setDonorName(e.target.value)}
                           placeholder="Your full name"
-                          className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                          className="mt-1 w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-brand-400"
                         />
                       </div>
                       <div>
@@ -126,7 +135,7 @@ export default function DonateModal({
                           value={donorEmail}
                           onChange={(e) => setDonorEmail(e.target.value)}
                           placeholder="you@example.com"
-                          className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                          className="mt-1 w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-brand-400"
                         />
                         <p className="text-xs text-gray-400 mt-1">
                           Used for your records and a future donation certificate.
@@ -137,6 +146,7 @@ export default function DonateModal({
                           type="checkbox"
                           checked={isAnonymous}
                           onChange={(e) => setIsAnonymous(e.target.checked)}
+                          className="rounded border-gray-300 text-brand-600 focus:ring-brand-400"
                         />
                         Donate anonymously (your name will be hidden publicly)
                       </label>
@@ -152,7 +162,7 @@ export default function DonateModal({
                         min={1}
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
-                        className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                        className="mt-1 w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-brand-400"
                       />
                     </div>
                   ) : (
@@ -166,7 +176,7 @@ export default function DonateModal({
                         min={1}
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
-                        className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                        className="mt-1 w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-brand-400"
                       />
                     </div>
                   )}
@@ -174,7 +184,7 @@ export default function DonateModal({
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full bg-brand-600 text-white py-2.5 rounded-lg font-medium hover:bg-brand-700 disabled:opacity-60"
+                    className="w-full bg-brand-600 text-white py-3 rounded-full font-medium hover:bg-brand-700 disabled:opacity-60 transition-colors"
                   >
                     {submitting
                       ? "Processing..."
@@ -196,14 +206,19 @@ export default function DonateModal({
               </>
             ) : (
               <div className="text-center py-6">
-                <h3 className="text-lg font-bold text-gray-800 mb-1">Thank you!</h3>
-                <p className="text-sm text-gray-600 mb-4">
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 text-green-600">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                </div>
+                <h3 className="font-serif text-lg font-bold text-gray-900 mb-1">Thank you!</h3>
+                <p className="text-sm text-gray-600 mb-5">
                   Your {activeNeed.type === "money" ? "donation" : "pledge"} has been recorded
                   against &quot;{activeNeed.title}&quot;.
                 </p>
                 <button
                   onClick={closeModal}
-                  className="bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200"
+                  className="bg-gray-100 px-5 py-2.5 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors"
                 >
                   Close
                 </button>
