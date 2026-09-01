@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: NextRequest) {
-  // --- Auth check: only admins may post a need ---
+  // --- Auth check: must be signed in, and must own the orphanage (or be admin) ---
   const cookieStore = await cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,18 +22,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: "Not signed in" }, { status: 401 });
   }
 
+  const body = await req.json();
+
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, orphanage_id")
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "admin") {
-    return NextResponse.json({ success: false, error: "Admins only" }, { status: 403 });
+  const isAdmin = profile?.role === "admin";
+  const ownsThisOrphanage =
+    profile?.role === "orphanage" && profile.orphanage_id === body.orphanageId;
+
+  if (!isAdmin && !ownsThisOrphanage) {
+    return NextResponse.json(
+      { success: false, error: "You can only post needs for your own orphanage" },
+      { status: 403 }
+    );
   }
   // --- End auth check ---
-
-  const body = await req.json();
 
   const row: any = {
     id: `need-${Date.now()}`,

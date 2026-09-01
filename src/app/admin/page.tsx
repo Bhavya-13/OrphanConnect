@@ -27,17 +27,6 @@ const cards = [
     accent: "bg-green-100 text-green-700",
   },
   {
-    href: "/admin/new-need",
-    title: "Post a New Need",
-    description: "Add a money or goods need to any orphanage's profile.",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
-    ),
-    accent: "bg-teal-100 text-teal-700",
-  },
-  {
     href: "/admin/team",
     title: "Manage Admins",
     description: "Promote other users to admin, or remove admin access.",
@@ -65,7 +54,7 @@ export default function AdminHomePage() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {cards.map((card, i) => (
             <Link
               key={card.href}

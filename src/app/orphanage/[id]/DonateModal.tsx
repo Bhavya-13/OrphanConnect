@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MoneyNeed, GoodsNeed } from "@/lib/types";
 import NeedCard from "@/components/NeedCard";
+import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
 
 export default function DonateModal({
   moneyNeeds,
@@ -20,6 +21,8 @@ export default function DonateModal({
   const [quantity, setQuantity] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  useLockBodyScroll(!!activeNeed);
 
   const openNeed = (need: MoneyNeed | GoodsNeed) => {
     setActiveNeed(need);

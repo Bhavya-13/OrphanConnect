@@ -4,6 +4,7 @@ import { useState } from "react";
 import VolunteerSignupForm from "@/components/VolunteerSignupForm";
 import Badge from "@/components/Badge";
 import { formatDate } from "@/lib/formatDate";
+import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
 
 interface VolReq {
   id: string;
@@ -17,6 +18,8 @@ interface VolReq {
 
 export default function VolunteerBrowser({ requests }: { requests: VolReq[] }) {
   const [active, setActive] = useState<VolReq | null>(null);
+
+  useLockBodyScroll(!!active);
 
   const openCount = requests.filter((r) => r.slotsAvailable - r.slotsFilled > 0).length;
 

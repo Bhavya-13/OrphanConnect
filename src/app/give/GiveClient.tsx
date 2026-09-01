@@ -5,6 +5,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/lib/useToast";
 import Badge from "@/components/Badge";
+import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
 
 interface NeedItem {
   id: string;
@@ -232,6 +233,8 @@ function NeedGiveCard({ need }: { need: NeedItem }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const { showToast } = useToast();
+
+  useLockBodyScroll(open);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
