@@ -27,6 +27,17 @@ const cards = [
     accent: "bg-green-100 text-green-700",
   },
   {
+    href: "/admin/new-need",
+    title: "Post a New Need",
+    description: "Add a money or goods need to any orphanage's profile.",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-6 h-6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+    ),
+    accent: "bg-teal-100 text-teal-700",
+  },
+  {
     href: "/admin/team",
     title: "Manage Admins",
     description: "Promote other users to admin, or remove admin access.",
@@ -42,33 +53,33 @@ const cards = [
 export default function AdminHomePage() {
   return (
     <AdminGuard>
-      <div className="max-w-5xl mx-auto px-4 py-10">
-        <div className="mb-8">
-          <span className="inline-block bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+      <div className="max-w-5xl mx-auto px-4 py-10 sm:py-14">
+        <div className="mb-10">
+          <span className="inline-flex items-center gap-2 bg-brand-50 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
             Admin
           </span>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Admin Panel</h1>
+          <h1 className="font-serif text-3xl font-bold text-gray-900 mb-2 tracking-tight">Admin Panel</h1>
           <p className="text-gray-500 text-sm">
             Manage orphanage verifications, view donations, and manage your team.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {cards.map((card) => (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-5">
+          {cards.map((card, i) => (
             <Link
               key={card.href}
               href={card.href}
-              className="group relative bg-white rounded-2xl p-6 border border-orange-100 hover:border-brand-300 hover:shadow-lg transition-all duration-200"
+              className="group relative bg-white rounded-2xl p-6 border border-orange-100 hover:border-brand-300 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 opacity-0 animate-fade-up"
+              style={{ animationDelay: `${i * 70}ms`, animationFillMode: "forwards" }}
             >
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${card.accent}`}>
                 {card.icon}
               </div>
-              <h2 className="font-semibold text-gray-800 mb-1 group-hover:text-brand-600 transition-colors">
+              <h2 className="font-semibold text-gray-900 mb-1 group-hover:text-brand-600 transition-colors">
                 {card.title}
               </h2>
-              <p className="text-sm text-gray-500 leading-relaxed">
-                {card.description}
-              </p>
+              <p className="text-sm text-gray-500 leading-relaxed">{card.description}</p>
               <span className="absolute top-6 right-6 text-gray-300 group-hover:text-brand-500 group-hover:translate-x-1 transition-all">
                 &rarr;
               </span>
