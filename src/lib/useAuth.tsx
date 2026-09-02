@@ -33,20 +33,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const init = async () => {
-      const { data } = await supabase.auth.getSession();
-      const currentUser = data.session?.user ?? null;
-      setUser(currentUser);
-      if (currentUser) {
-        setRole(await fetchRole(currentUser.id));
-      } else {
-        setRole(null);
-      }
-      setLoading(false);
-    };
+    let resolvedInitial = false;
 
-    init();
-
+    // onAuthStateChange fires once immediately with the real, fully-resolved
+    // session (event === "INITIAL_SESSION") and again on every subsequent
+    // auth change. We treat that first callback as authoritative instead of
+    // racing it against a separate getSession() call, which can otherwise
+    // report `loading: false` with a stale/empty session for a moment.
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         const currentUser = session?.user ?? null;
@@ -56,11 +49,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setRole(null);
         }
+        resolvedInitial = true;
         setLoading(false);
       }
     );
 
-    return () => listener.subscription.unsubscribe();
+    // Safety net: if onAuthStateChange hasn't fired yet for some reason
+    // shortly after mount, fall back to an explicit getSession() check
+    // rather than leaving the app stuck on loading forever.
+    const fallback = setTimeout(async () => {
+      if (resolvedInitial) return;
+      const { data } = await supabase.auth.getSession();
+      const currentUser = data.session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        setRole(await fetchRole(currentUser.id));
+      } else {
+        setRole(null);
+      }
+      setLoading(false);
+    }, 1500);
+
+    return () => {
+      listener.subscription.unsubscribe();
+      clearTimeout(fallback);
+    };
   }, []);
 
   const signOut = async () => {
